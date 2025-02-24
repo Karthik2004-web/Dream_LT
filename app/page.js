@@ -949,6 +949,47 @@ const DreamBackground = () => (
   </div>
 );
 
+// const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
+//   <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg mb-4">
+//     <input
+//       type="text"
+//       placeholder="Feature name"
+//       value={feature.name}
+//       onChange={(e) => updateFeature(index, "name", e.target.value)}
+//       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+//     />
+//     <select 
+//       value={feature.datatype} 
+//       onChange={(e) => updateFeature(index, "datatype", e.target.value)}
+//       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+//     >
+//       <option value="">Select data type</option>
+//       <option value="float">Float</option>
+//       <option value="integer">Integer</option>
+//       <option value="string">String</option>
+//     </select>
+//     <input
+//       type="text"
+//       placeholder="Range or mean"
+//       value={feature.range_or_mean}
+//       onChange={(e) => updateFeature(index, "range_or_mean", e.target.value)}
+//       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+//     />
+//     <input
+//       type="text"
+//       placeholder="Standard deviation"
+//       value={feature.std_dev}
+//       onChange={(e) => updateFeature(index, "std_dev", e.target.value)}
+//       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+//     />
+//     <button
+//       onClick={() => removeFeature(index)}
+//       className="text-red-400 hover:text-red-300"
+//     >
+//       Remove Feature
+//     </button>
+//   </div>
+// );
 const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
   <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg mb-4">
     <input
@@ -970,18 +1011,20 @@ const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
     </select>
     <input
       type="text"
-      placeholder="Range or mean"
+      placeholder={feature.datatype === "integer" ? "Range (e.g., 1-100)" : "Mean"}
       value={feature.range_or_mean}
       onChange={(e) => updateFeature(index, "range_or_mean", e.target.value)}
       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
     />
-    <input
-      type="text"
-      placeholder="Standard deviation"
-      value={feature.std_dev}
-      onChange={(e) => updateFeature(index, "std_dev", e.target.value)}
-      className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
-    />
+    {feature.datatype === "float" && (
+      <input
+        type="text"
+        placeholder="Standard deviation"
+        value={feature.std_dev}
+        onChange={(e) => updateFeature(index, "std_dev", e.target.value)}
+        className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+      />
+    )}
     <button
       onClick={() => removeFeature(index)}
       className="text-red-400 hover:text-red-300"
@@ -1067,15 +1110,59 @@ export default function Home() {
     }
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({
-        ...formData,
-        csvFile: file
+  // const handleFileUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setFormData({
+  //       ...formData,
+  //       csvFile: file
+  //     });
+  //   }
+  // };
+// Update the file upload and feature handling in your page.js
+const handleFileUpload = async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFormData({
+      ...formData,
+      csvFile: file
+    });
+
+    try {
+      // Create form data for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Process CSV file
+      const response = await axios.post('/api/process-csv', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
+
+      // Update features with processed data
+      if (response.data.features) {
+        setFormData(prevState => ({
+          ...prevState,
+          data: {
+            ...prevState.data,
+            features: response.data.features
+          }
+        }));
+
+        // Show success message
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error('Error processing CSV:', error);
+      setError(error.response?.data?.error || 'Error processing CSV file');
     }
-  };
+  }
+};
+
+// Update the FeatureInput component to display the processed values
+
 
   const updateFeature = (index, field, value, isTarget = false) => {
     if (isTarget) {
@@ -1138,12 +1225,79 @@ export default function Home() {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+  //   setSuccess(false);
+
+  //   try {
+  //     // Validate required fields
+  //     if (!formData.numSamples || isNaN(parseInt(formData.numSamples))) {
+  //       throw new Error("Number of samples is required and must be a valid number");
+  //     }
+      
+  //     if (!formData.data.features || formData.data.features.length === 0) {
+  //       throw new Error("At least one feature is required");
+  //     }
+      
+  //     if (!formData.typeOfData) {
+  //       throw new Error("Type of data is required");
+  //     }
+      
+  //     if (!formData.distributionType) {
+  //       throw new Error("Distribution type is required");
+  //     }
+      
+  //     // Build MongoDB-compatible config structure
+  //     const finalConfig = {
+  //       model_description: formData.model_description || `${formData.typeOfData} dataset with ${formData.data.features.length} features`,
+  //       data: {
+  //         type: formData.data.type,
+  //         output_format: formData.datasetType ? formData.datasetType.toLowerCase() : "json",
+  //         distribution: formData.distributionType || "Gaussian",
+  //         linearity_ratio: formData.data.linearity_ratio || "",
+  //         num_samples: parseInt(formData.numSamples),
+  //         features: formData.data.features,
+  //       },
+  //       target: {
+  //         type: formData.target.type,
+  //         features: formData.target.features,
+  //       },
+  //     };
+
+  //     // Add classes if classification is selected
+  //     if (formData.target.type === "classification" && formData.classes) {
+  //       finalConfig.target.classes = formData.classes.split(",").map(c => c.trim());
+  //     }
+
+  //     // Add CSV data if a file was uploaded
+  //     if (formData.csvFile) {
+  //       const csvContent = await formData.csvFile.text();
+  //       finalConfig.csvData = csvContent;
+  //     }
+
+  //     console.log("Submitting config:", finalConfig);
+      
+  //     const response = await axios.post("/api/submit-config", finalConfig);
+  //     const response1 = await axios.post("https://2378-34-23-103-109.ngrok-free.app/", finalConfig);
+  //     setSuccess(true);
+  //     console.log("Data saved successfully:", response.data);
+  //     console.log("Data saved successfully:", response1.data);
+  //   } catch (err) {
+  //     const errorMessage = err.response?.data?.error || err.message || "Failed to save data";
+  //     setError(errorMessage);
+  //     console.error("Error submitting form:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess(false);
-
+  
     try {
       // Validate required fields
       if (!formData.numSamples || isNaN(parseInt(formData.numSamples))) {
@@ -1178,23 +1332,39 @@ export default function Home() {
           features: formData.target.features,
         },
       };
-
+  
       // Add classes if classification is selected
       if (formData.target.type === "classification" && formData.classes) {
         finalConfig.target.classes = formData.classes.split(",").map(c => c.trim());
       }
-
+  
       // Add CSV data if a file was uploaded
       if (formData.csvFile) {
         const csvContent = await formData.csvFile.text();
         finalConfig.csvData = csvContent;
       }
-
+  
       console.log("Submitting config:", finalConfig);
-      
+  
+      // Send JSON data to internal API
       const response = await axios.post("/api/submit-config", finalConfig);
-      setSuccess(true);
       console.log("Data saved successfully:", response.data);
+  
+      // **Send JSON data to ngrok endpoint**
+      const ngrokResponse = await axios.post(
+        "https://2378-34-23-103-109.ngrok-free.app/",
+        finalConfig,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+  
+      console.log("Data sent to ngrok successfully:", ngrokResponse.data);
+  
+      setSuccess(true);
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.message || "Failed to save data";
       setError(errorMessage);
@@ -1203,6 +1373,7 @@ export default function Home() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="relative min-h-screen bg-black text-white">
@@ -1409,7 +1580,7 @@ export default function Home() {
               </button>
             </div>
 
-            {formData.data.type === "labeled" && formData.target.type === "prediction" && (
+            {formData.data.type === "labeled"  && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold text-gray-200">Target Features</h2>
                 {formData.target.features.map((feature, index) => (
