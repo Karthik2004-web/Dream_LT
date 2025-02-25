@@ -43,7 +43,7 @@ const syntheticDataSchema = new mongoose.Schema(
     data: {
       type: { type: String, required: true, enum: ["labeled", "unlabeled"] },
       output_format: { type: String, required: true, enum: ["json", "csv"] },
-      distribution: { type: String, required: true, enum: ["Gaussian", "Uniform", "Exponential"] },
+      distribution: { type: String, required: true, enum: ["gaussian", "uniform", "exponential","normal","linear"] },
       linearity_ratio: { type: String, default: "" },
       num_samples: { type: Number, required: true, min: 1 },
       features: [featureSchema],

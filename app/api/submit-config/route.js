@@ -27,7 +27,7 @@ export async function POST(request) {
     await syntheticData.save();
 
     const ngrokResponse = await axios.post(
-      "https://cbc2-34-23-103-109.ngrok-free.app/generate",
+      "https://e8a5-34-28-93-222.ngrok-free.app/generate",
       data,
       {
         headers: {
@@ -36,11 +36,10 @@ export async function POST(request) {
         },
       }
     );
+    const csvData = ngrokResponse.data
+    console.log("Data sent to ngrok successfully✅✅");
 
-    console.log("Data sent to ngrok successfully:", ngrokResponse.data);
-
-    // Return response
-    return NextResponse.json(syntheticData, { status: 201 });
+    return NextResponse.json({syntheticFile:csvData}, { status: 201 });
   } catch (err) {
     console.error("Error saving data:", err);
     return NextResponse.json(

@@ -1292,6 +1292,7 @@ const handleFileUpload = async (e) => {
   //     setLoading(false);
   //   }
   // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1348,22 +1349,25 @@ const handleFileUpload = async (e) => {
   
       // Send JSON data to internal API
       const response = await axios.post("/api/submit-config", finalConfig);
-      console.log("Data saved successfully:", response.data);
+      console.log("Data saved successfully:✅", response.data.syntheticFile);
+      let finalCSVData = response.data.syntheticFile;
+
+      // Create a Blob (file) from the CSV data
+      const blob = new Blob([finalCSVData], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
   
-      // **Send JSON data to ngrok endpoint**
-      const ngrokResponse = await axios.post(
-        "https://2378-34-23-103-109.ngrok-free.app/",
-        finalConfig,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
+      // Create a temporary link element and trigger download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "synthetic_data.csv"; // File name
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+
   
-      console.log("Data sent to ngrok successfully:", ngrokResponse.data);
-  
+
+
       setSuccess(true);
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.message || "Failed to save data";
@@ -1373,6 +1377,10 @@ const handleFileUpload = async (e) => {
       setLoading(false);
     }
   };
+  const handleDownload = () => {
+    // Convert the array to CSV string
+
+};
   
 
   return (
@@ -1610,7 +1618,11 @@ const handleFileUpload = async (e) => {
               disabled={loading}
             >
               {loading ? "Submitting..." : "Submit"}
+
             </motion.button>
+            {/* <motion.button onClick={handleDownload}>
+                Download CSV
+              </motion.button> */}
           </form>
         </motion.div>
       </div>
