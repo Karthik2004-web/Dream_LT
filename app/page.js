@@ -925,30 +925,43 @@
 // }
 
 
-
-
-
 "use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
 
+
 const DreamBackground = () => (
   <div className="absolute inset-0 overflow-hidden">
     <div className="absolute left-16 top-12">
       <motion.span 
-        className="text-8xl font-extralight tracking-wider text-white opacity-90"
+        className="text-7xl font-extralight tracking-wider text-white opacity-90"
         style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.1em' }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        Dream
+        D.R.E.A.M.
       </motion.span>
     </div>
-  </div>
-);
+    <svg 
+       viewBox="0 0 800 600" 
+       className="absolute right-0 h-full w-2/3"
+       preserveAspectRatio="none"
+     >
+       <motion.path
+         initial={{ opacity: 0, pathLength: 0 }}
+         animate={{ opacity: 1, pathLength: 1 }}
+         transition={{ duration: 2, ease: "easeInOut" }}
+         d="M300,0 L800,0 L800,600 L400,600 Q350,300 300,0"
+         fill="#0066ff"
+         opacity="0.8"
+       />
+   </svg>
+   </div>
+ );
 
+  
 // const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
 //   <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg mb-4">
 //     <input
@@ -1011,12 +1024,12 @@ const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
     </select>
     <input
       type="text"
-      placeholder={feature.datatype === "integer" ? "Range (e.g., 1-100)" : "Mean"}
+      placeholder={"Range (e.g., 1-100) / Mean"}
       value={feature.range_or_mean}
       onChange={(e) => updateFeature(index, "range_or_mean", e.target.value)}
       className="w-full p-2 rounded bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
     />
-    {feature.datatype === "float" && (
+    {feature.datatype && (
       <input
         type="text"
         placeholder="Standard deviation"
@@ -1309,9 +1322,9 @@ const handleFileUpload = async (e) => {
         throw new Error("At least one feature is required");
       }
       
-      if (!formData.typeOfData) {
-        throw new Error("Type of data is required");
-      }
+      // if (!formData.typeOfData) {
+      //   throw new Error("Type of data is required");
+      // }
       
       if (!formData.distributionType) {
         throw new Error("Distribution type is required");
@@ -1447,7 +1460,7 @@ const handleFileUpload = async (e) => {
                     })}
                     className="mr-2"
                   />
-                  <span>Labeled</span>
+                  <span>Labelled</span>
                 </label>
                 <label className="inline-flex items-center">
                   <input
@@ -1461,7 +1474,7 @@ const handleFileUpload = async (e) => {
                     })}
                     className="mr-2"
                   />
-                  <span>Unlabeled</span>
+                  <span>Unlabelled</span>
                 </label>
               </div>
             </motion.div>
@@ -1500,7 +1513,7 @@ const handleFileUpload = async (e) => {
               </motion.div>
             )}
 
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+            {/* <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <label className="block text-gray-300">Type of Data</label>
               <input
                 type="text"
@@ -1511,7 +1524,7 @@ const handleFileUpload = async (e) => {
                 placeholder="e.g., Float, Integer, String"
                 required
               />
-            </motion.div>
+            </motion.div> */}
 
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <label className="block text-gray-300">Number of Samples</label>
@@ -1542,15 +1555,20 @@ const handleFileUpload = async (e) => {
 
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <label className="block text-gray-300">Type of Distribution</label>
-              <input
-                type="text"
+              <select
                 name="distributionType"
                 value={formData.distributionType}
                 onChange={handleChange}
                 className="w-full p-3 bg-gray-800/50 rounded-md border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Gaussian, Uniform, Exponential"
                 required
-              />
+              >
+                <option value="" disabled>Select a distribution</option>
+                <option value="gaussian">Gaussian</option>
+                <option value="uniform">Uniform</option>
+                <option value="exponential">Exponential</option>
+                <option value="normal">Normal</option>
+                <option value="linear">Linear</option>
+              </select>
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
