@@ -933,22 +933,38 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
 
+
 const DreamBackground = () => (
   <div className="absolute inset-0 overflow-hidden">
     <div className="absolute left-16 top-12">
       <motion.span 
-        className="text-8xl font-extralight tracking-wider text-white opacity-90"
+        className="text-7xl font-extralight tracking-wider text-white opacity-90"
         style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.1em' }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        Dream
+        D.R.E.A.M
       </motion.span>
     </div>
-  </div>
-);
+    <svg 
+       viewBox="0 0 800 600" 
+       className="absolute right-0 h-full w-2/3"
+       preserveAspectRatio="none"
+     >
+       <motion.path
+         initial={{ opacity: 0, pathLength: 0 }}
+         animate={{ opacity: 1, pathLength: 1 }}
+         transition={{ duration: 2, ease: "easeInOut" }}
+         d="M300,0 L800,0 L800,600 L400,600 Q350,300 300,0"
+         fill="#0066ff"
+         opacity="0.8"
+       />
+   </svg>
+   </div>
+ );
 
+  
 // const FeatureInput = ({ feature, index, updateFeature, removeFeature }) => (
 //   <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg mb-4">
 //     <input

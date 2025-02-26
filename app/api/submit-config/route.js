@@ -27,7 +27,7 @@ export async function POST(request) {
     await syntheticData.save();
 
     const ngrokResponse = await axios.post(
-      "https://fd12-34-28-93-222.ngrok-free.app/generate",
+      "https://af70-34-73-102-117.ngrok-free.app/generate",
       data,
       {
         headers: {
