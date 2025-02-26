@@ -1423,7 +1423,26 @@ const handleFileUpload = async (e) => {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="bg-white text-black p-4 rounded-md mb-4">
+            <p className="text-lg font-semibold">
+             A Friendly Nudge for Better Data
+            </p>
+           <ul className="list-disc list-inside text-sm mt-2">
+          <li>
+            Make sure your standard deviation matches your range to maintain the right level of variation in your dataset. Too much or too little spread can impact data quality.
+          </li>
+          <li>
+          Understand your linearity-to-nonlinearity ratio to control noise levels effectively. A higher non-linearity means more randomness, so adjust it based on your needs.
+          </li>
+          <li>
+          Pick a distribution that fits your data’s nature—Gaussian for natural variations, exponential for skewed data, or uniform for evenly spread values.
+          </li>
+          </ul>
+       </div>
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+            
+            
+            
               <label className="block text-gray-300">Model Description</label>
               <input
                 type="text"
