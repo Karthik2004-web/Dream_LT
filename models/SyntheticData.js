@@ -31,7 +31,7 @@ import mongoose from "mongoose";
 // Define Feature Schema
 const featureSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  datatype: { type: String, required: true, enum: ["float", "integer", "string"] },
+  // datatype: { type: String, required: true, enum: ["float", "integer", "string"] },
   range_or_mean: { type: String, default: "" },
   std_dev: { type: String, default: "" },
 });
